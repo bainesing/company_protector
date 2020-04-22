@@ -1,0 +1,48 @@
+{
+	"pages": [
+		{
+			"path": "pages/me/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "首页",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/index/message",
+			"style": {
+				"navigationBarTitleText": "消息",
+				"navigationStyle": "custom"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTitleText": "企业安全隐患排查",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"navigationBarTextStyle": "black",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#f8f8f8",
+		"selectedColor": "#ffffff",
+		"borderStyle": "white",
+		"backgroundColor": "#29c07d",
+		"list": [{
+			"pagePath": "pages/index/index",
+			"iconPath": "static/icon/index.png",
+			"selectedIconPath": "static/icon/index_selected.png",
+			"text": "首页"
+		}, {
+			"pagePath": "pages/index/message",
+			"iconPath": "static/icon/message.png",
+			"selectedIconPath": "static/icon/message_selected.png",
+			"text": "消息"
+		}]
+	}
+}
