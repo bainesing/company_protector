@@ -13,44 +13,95 @@
 
 		<!-- 根据用户类别展示不同的内容 -->
 		<!-- 专家用户 开始 -->
-		<block v-if="user_info.type==='professor'">
+		<block v-if="userInfo.type==='professor'">
 
+			<block v-if="professorMessageList.length >0">
+				<view class="notify_title">
+					<image class="icon" src="../../static/icon/notify_green.png"></image>
+					<view class="text">您有新的整改信息待审核</view>
+				</view>
+				<view class="message_list">
+					<block v-for="(item, index) in professorMessageList" :key="index">
+						<view class="item">
+							<!-- 缩略图用背景展示 -->
+							<view class="picture" style="background-image: linear-gradient(to bottom, #888888,#888888)">
+								<block v-if="item.status === 0">
+									<view class="cover danger">
+										<image class="icon" src="../../static/icon/danger_icon.png"></image>
+									</view>
+								</block>
+								<block v-else>
+									<view class="cover success">
+										<image class="icon" src="../../static/icon/success_icon.png"></image>
+									</view>
+								</block>
+							</view>
+							<view class="title">{{item.title}}</view>
+							<view v-if="item.status === 0" class="button" @click="viewMessageDetail" :data-index="index">提交整改</view>
+							<view v-else class="button" @click="viewMessageDetail" :data-index="index">提交审核</view>
+						</view>
+					</block>
+				</view>
+			</block>
+			<block v-else>
+				<view class="no_item_box">
+					<image class="icon" src="../../static/icon/no_item.png"></image>
+					<view class="text">没有消息</view>
+				</view>
+			</block>
 
 
 		</block>
 		<!-- 专家用户 结束 -->
 
 		<!-- 企业用户 开始 -->
-		<block v-if="user_info.type==='company'">
-			<view class="notify_title">
-				<image class="icon" src="../../static/icon/notify_green.png"></image>
-				<view class="text">您有新的安全隐患待整改</view>
-			</view>
+		<block v-else-if="userInfo.type==='company'">
 
-			<view class="message_list">
-				<block v-for="(item, index) in messageList" :key="index">
-					<view class="item">
-						<!-- 缩略图用背景展示 -->
-						<view class="picture" style="background-image: linear-gradient(to bottom, #888888,#888888)">
-							<block v-if="item.status === 0">
-								<view class="cover danger">
-									<image class="icon" src="../../static/icon/danger_icon.png"></image>
-								</view>
-							</block>
-							<block v-else>
-								<view class="cover success">
-									<image class="icon" src="../../static/icon/success_icon.png"></image>
-								</view>
-							</block>
+			<block v-if="messageList.length >0">
+				<view class="notify_title">
+					<image class="icon" src="../../static/icon/notify_green.png"></image>
+					<view class="text">您有新的安全隐患待整改</view>
+				</view>
+				<view class="message_list">
+					<block v-for="(item, index) in messageList" :key="index">
+						<view class="item">
+							<!-- 缩略图用背景展示 -->
+							<view class="picture" style="background-image: linear-gradient(to bottom, #888888,#888888)">
+								<block v-if="item.status === 0">
+									<view class="cover danger">
+										<image class="icon" src="../../static/icon/danger_icon.png"></image>
+									</view>
+								</block>
+								<block v-else>
+									<view class="cover success">
+										<image class="icon" src="../../static/icon/success_icon.png"></image>
+									</view>
+								</block>
+							</view>
+							<view class="title">{{item.title}}</view>
+							<view v-if="item.status === 0" class="button" @click="viewMessageDetail" :data-index="index">提交整改</view>
+							<view v-else class="button" @click="viewMessageDetail" :data-index="index">查看详情</view>
 						</view>
-						<view class="title">{{item.title}}</view>
-						<view v-show="item.status === 0" class="button">提交整改</view>
-					</view>
-				</block>
-			</view>
+					</block>
+				</view>
+			</block>
+			<block v-else>
+				<view class="no_item_box">
+					<image class="icon" src="../../static/icon/no_item.png"></image>
+					<view class="text">没有消息</view>
+				</view>
+			</block>
 
 		</block>
 		<!-- 企业用户 结束 -->
+
+		<!-- 用户没登录 开始 -->
+		<block v-else>
+			<view class="no_item_box">
+				<image class="icon" src="../../static/icon/no_item.png"></image>
+				<view class="text">没有消息</view>
+			</view>
+		</block>
 
 
 
@@ -65,9 +116,9 @@
 					{name:"最新热点新闻",url:"../../static/banner/banner1.jpg"}
 				],
 				//用户信息。这里的用户信息应当通过登录时从服务器获取。数据只是测试用，具体字段根据接口返回而定。
-				user_info: {
-					user_name: '测试用户',
-					type: 'company'
+				userInfo: {
+					user_name: '',
+					type: '' //company-公司用户  professor-专家用户
 				},
 
 				//整改列表。如果是专家用户，这里存储待审核列表
@@ -82,15 +133,38 @@
 					{title: '某某专家检测出最新需要整改的安全隐患，请查看并尽快整改提交',status: 0},
 					{title: '某某专家检测出最新需要整改的安全隐患，请查看并尽快整改提交',status: 1},
 					{title: '某某专家检测出最新需要整改的安全隐患，请查看并尽快整改提交',status: 0},
+				],
+
+				professorMessageList: [
+					{title: '某某企业提交了最新整改的安全隐患，请查看并尽快核实',status: 1},
+					{title: '某某企业提交了最新整改的安全隐患，请查看并尽快核实',status: 1},
+					{title: '某某企业提交了最新整改的安全隐患，请查看并尽快核实',status: 1},
+					{title: '某某企业提交了最新整改的安全隐患，请查看并尽快核实',status: 1},
+					{title: '某某企业提交了最新整改的安全隐患，请查看并尽快核实',status: 1},
+					{title: '某某企业提交了最新整改的安全隐患，请查看并尽快核实',status: 1},
+					{title: '某某企业提交了最新整改的安全隐患，请查看并尽快核实',status: 0},
+					{title: '某某企业提交了最新整改的安全隐患，请查看并尽快核实',status: 1},
+					{title: '某某企业提交了最新整改的安全隐患，请查看并尽快核实',status: 1},
+					{title: '某某企业提交了最新整改的安全隐患，请查看并尽快核实',status: 1},
 				]
 			}
 		},
-		onLoad() {
-
-		},
 		methods: {
 
-		}
+			//查看消息详情
+			viewMessageDetail:function (e) {
+				let dataset = e.currentTarget.dataset;
+				// 根据index获取点击项目
+				let item = this.messageList[dataset.index];
+				uni.navigateTo({
+					url: 'messageDetail'
+				})
+			}
+
+		},
+		onShow:function() {
+			this.userInfo = uni.getStorageSync("user_info");
+		},
 	}
 </script>
 
@@ -141,7 +215,7 @@
 	.message_list .item{
 		width: 690upx;
 		box-sizing: border-box;
-		padding: 30upx;
+		padding: 20upx;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -205,6 +279,31 @@
 
 	.message_list .item .button:active{
 		opacity: .7;
+	}
+
+
+	/*没有消息*/
+	.no_item_box{
+		width: 690upx;
+		height: 500upx;
+		display: flex;
+		flex-flow: column;
+		align-items: center;
+		justify-content: center;
+		background-color: #ffffff;
+		/*box-shadow: 0 0 20upx 0 rgba(41, 192, 125,0.2);*/
+		margin: 40upx auto;
+		border-radius: 20upx;
+	}
+
+	.no_item_box .icon{
+		width: 200upx;
+		height: 200upx;
+	}
+
+	.no_item_box .text{
+		color: #29c07d;
+		font-size: 30upx;
 	}
 
 </style>

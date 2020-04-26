@@ -21,9 +21,9 @@
                 <input class="input_item" type="password" v-model="password" placeholder="输入密码" />
                 <input class="input_item" type="number" v-model="register_phone" placeholder="注册电话" />
                 <view class="modal_title">用户类型</view>
-                <radio-group class="radio_box">
-                    <label class="item"><radio value="company" color="#29c07d" checked="true" />企业用户</label>
-                    <label class="item"><radio value="professor" color="#29c07d" />专家用户</label>
+                <radio-group class="radio_box" @change="registerTypeChange">
+                    <label class="item"><radio value="company" color="#29c07d" :checked="register_type === 'company'" />企业用户</label>
+                    <label class="item"><radio value="professor" color="#29c07d" :checked="register_type === 'professor'" />专家用户</label>
                 </radio-group>
                 <view class="modal_title">证书上传</view>
                 <view class="certificate_box"></view>
@@ -57,8 +57,21 @@
 
         },
         methods: {
+            //切换登录操作
+            registerTypeChange:function(e){
+                this.register_type = e.detail.value
+            },
+
             //登录
             bindLogin:function () {
+                //测试数据
+                let userInfo =  {
+                    user_name: '',
+                    // type: 'company' //company-公司用户  professor-专家用户
+                    type: this.register_type
+                };
+                uni.setStorageSync("user_info",userInfo);
+
                 uni.switchTab({
                     url: '../index/index'
                 })
@@ -66,7 +79,7 @@
 
             //注册
             bindRegister:function(){
-
+                this.bindLogin();
             },
 
             //点击注册或者点击登录
